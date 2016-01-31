@@ -148,6 +148,12 @@ def clickHandler(babyType, item, time, currMessage, gameOver):
             return "The baby sees your razor but shows no fear.", time
     return "Error", -1
 
+try:
+	mixer.music.load("data/music/babykiller01_Purity.ogg")
+	mixer.music.play(-1)
+except:
+	pass
+
 # Game loop
 while True:
     currentBabySprite = getSprite(currentBabyType, time)
