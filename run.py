@@ -23,7 +23,7 @@ GARLIC_ITEM = 1
 STAKE_ITEM = 2
 FISH_ITEM = 3
 SILVER_ITEM = 4
-SILVERBULLET_ITEM = 5
+SWATTER_ITEM = 5
 RAZOR_ITEM = 6
 
 BASE_TYPE = 0
@@ -55,31 +55,41 @@ def getNextBabyType():
         return BASE_TYPE
 
 def getSprite(currentBabyType, time):
-    print("BABY: " + str(currentBabyType))
+    if time == -1:
+		 return BASEBABY
     if currentBabyType == LARS_TYPE:
         return LARS
     elif currentBabyType == WERE_TYPE:
         if time > 9:
             return BASEBABY
-        elif time > 6:
-		   	return BABY_FANGS
         elif time > 3:
+		   	return BABY_FANGS
+        elif time > 0:
 			   return WEREBABY_PART
         elif time == 0:
 			   return WEREBABY_FULL
     elif currentBabyType == VAMP_TYPE:
         if time > 9:
             return BASEBABY
-        elif time > 6:
+        elif time > 3:
             prob = randint(0, 1)
             if prob == 0:
                 return BABY_EYES
             if prob == 1:
                 return BABY_FANGS
-        elif time > 3:
+        elif time > 0:
             return VAMPBABY_PART
+        elif time == 0:
+			   return VAMPBABY_FULL
     elif currentBabyType == TENGU_TYPE:
-        return TENGUBABY_PART
+        if time > 9:
+            return BASEBABY
+        elif time > 3:
+		   	return BASEBABY
+        elif time > 0:
+			   return TENGUBABY_PART
+        elif time == 0:
+			   return TENGUBABY_FULL 
     else:
         return BASEBABY
 
@@ -93,21 +103,22 @@ def clickHandler(babyType, item, time, currMessage, gameOver):
             return "You've given this beast our Goddess's protection! You monster!", -1 
     elif item == GARLIC_ITEM:
         if babyType == VAMP_TYPE:
-            return "It's a vampire!", 12
+            return "It's a vampire!", time
         else:
             return "The baby sniffs the garlic, wholly apathetic.", time
     elif item == STAKE_ITEM:
         if babyType == VAMP_TYPE:
-            return "You've killed the vampire with a stake through his heart!", 12
+            return "You've staked the vampire's heart!", 12
         else:
             return "It wasn't a vampire and you staked it :(", time
-    elif item == RAZOR_ITEM:
-        if babyType == LARS_TYPE:
-            return "You shaved its beard, the source of its power!", 12
-        elif babyType == BASE_TYPE:
-            return "You attack the baby with the razor. What is wrong with you?", -1
+    elif item == FISH_ITEM:
+        if babyType == TENGU_TYPE:
+            return "It's a tengu! It hates the fish so much it flees.", 12
         else:
-            return "The baby sees your razor but shows no fear.", time
+            return "The baby does not appreciate the smell of fish.", time
+    elif item == SWATTER_ITEM:
+        if babyType > 0:
+            return "You hit the baby with a fly swatter. It cries.", time
     elif item == SILVER_ITEM:
         if babyType == WERE_TYPE:
             return "A silver bullet! You shoot the werewolf.", 12
@@ -115,18 +126,18 @@ def clickHandler(babyType, item, time, currMessage, gameOver):
             return "You've shot it, but it isn't a werewolf", time
         else:
             return "You've killed that baby ;-;", -1
-    elif item == FISH_ITEM:
-        if babyType == TENGU_TYPE:
-            return "It's a tengu! It hates the fish so much it flees.", 12
+    elif item == RAZOR_ITEM:
+        if babyType == LARS_TYPE:
+            return "You shaved its beard, the source of its power!", 12
+        elif babyType == BASE_TYPE:
+            return "You attack the baby with the razor. What is wrong with you?", -1
         else:
-            return "The baby does not appreciate the smell of fish.", time
+            return "The baby sees your razor but shows no fear.", time
     return "Error", -1
 
 # Game loop
 while True:
-    if currentBabyType == None:
-        currentBabyType = getNextBabyType()
-        currentBabySprite = getSprite(currentBabyType, time)
+    currentBabySprite = getSprite(currentBabyType, time)
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -141,8 +152,8 @@ while True:
             # HERE
             elif TOP_RIGHT.collidepoint(pos):
                 message, time = clickHandler(currentBabyType, GARLIC_ITEM, time, message, gameOver)
-                if time == 12:
-                    currentBabyType = None
+                if currentBabyType == VAMP_TYPE:
+                    currentBabySprite = VAMPBABY_PART
             elif CENTER_RIGHT.collidepoint(pos):
                 message, time = clickHandler(currentBabyType, STAKE_ITEM, time, message, gameOver)
                 if time == 12:
@@ -159,9 +170,15 @@ while True:
                 message, time = clickHandler(currentBabyType, SILVER_ITEM, time, message, gameOver)
                 if time == 12:
                     currentBabyType = None
+            elif BOTTOM_CENTER.collidepoint(pos):
+                message, time = clickHandler(currentBabyType, SWATTER_ITEM, time, message, gameOver)
+                if time == 12:
+                    currentBabyType = None
         elif event.type == USEREVENT+1:
             if time >= 0:
                 time -= 1
+    if currentBabyType == None:
+        currentBabyType = getNextBabyType()
     pygame.display.update()
     DISPLAYSURF.blit(background, (0, 0))
     DISPLAYSURF.blit(currentBabySprite, (300, 300))
@@ -179,10 +196,10 @@ while True:
             text = font.render("Time: " + str(time), 1, (255, 0, 0))
             textpos = text.get_rect(centerx=50)
             DISPLAYSURF.blit(text, textpos)
-    #background.blit(GARLIC, (560, 20))
-    pygame.draw.rect(background, (255, 0, 0, 0), TOP_RIGHT)
-    pygame.draw.rect(background, (255, 255,  0, 0), CENTER_RIGHT)
-    pygame.draw.rect(background, (255, 0, 0, 0), BOTTOM_RIGHT)
-    pygame.draw.rect(background, (255, 0, 0, 0), TOP_CENTER)
-    pygame.draw.rect(background, (255, 0, 0, 0), CENTER)
-    pygame.draw.rect(background, (255, 0, 0, 0), BOTTOM_CENTER)
+
+    background.blit(FISH, TOP_CENTER)
+    background.blit(GARLIC, TOP_RIGHT)
+    background.blit(BULLET, CENTER)
+    background.blit(STAKE, CENTER_RIGHT)
+    background.blit(SWAT, BOTTOM_CENTER)
+    background.blit(RAZOR, BOTTOM_RIGHT)
