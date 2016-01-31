@@ -56,18 +56,18 @@ def getNextBabyType():
 
 def getSprite(currentBabyType, time):
     if time == -1:
-		 return BASEBABY
+        return BASEBABY
     if currentBabyType == LARS_TYPE:
         return LARS
     elif currentBabyType == WERE_TYPE:
         if time > 9:
             return BASEBABY
         elif time > 3:
-		   	return BABY_FANGS
+            return BABY_FANGS
         elif time > 0:
-			   return WEREBABY_PART
+            return WEREBABY_PART
         elif time == 0:
-			   return WEREBABY_FULL
+            return WEREBABY_FULL
     elif currentBabyType == VAMP_TYPE:
         if time > 9:
             return BASEBABY
@@ -80,16 +80,16 @@ def getSprite(currentBabyType, time):
         elif time > 0:
             return VAMPBABY_PART
         elif time == 0:
-			   return VAMPBABY_FULL
+            return VAMPBABY_FULL
     elif currentBabyType == TENGU_TYPE:
         if time > 9:
             return BASEBABY
         elif time > 3:
-		   	return BASEBABY
+            return BASEBABY
         elif time > 0:
-			   return TENGUBABY_PART
+            return TENGUBABY_PART
         elif time == 0:
-			   return TENGUBABY_FULL 
+            return TENGUBABY_FULL 
     else:
         return BASEBABY
 
