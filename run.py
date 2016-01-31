@@ -5,7 +5,7 @@ from sprites import *
 from pygame.locals import *
 from random import randint
 
-intro()
+#intro()
 DISPLAYSURF = pygame.display.set_mode((800, 593))
 pygame.display.set_caption("Kill the Baby!")
 background = load_image("KTBbackground2.png")
@@ -37,108 +37,148 @@ gameOver = False
 currentBabySprite = BASEBABY
 currentBabyType = None
 message = ""
-time = 6
+time = 12
 pygame.time.set_timer(USEREVENT+1, 1000)
 
 # Decide if next baby is normal, or a monster
 def getNextBabyType():
-    prob = randint(0, 5)
-    if prob == 1:
+    prob = randint(0, 9)
+    if prob == 0 or prob == 1:
         return WERE_TYPE
-    elif prob == 2:
+    elif prob == 3 or prob == 4:
         return VAMP_TYPE
-    elif prob == 3:
+    elif prob == 5 or prob == 6:
         return TENGU_TYPE
-    elif prob == 4:
+    elif prob == 2:
         return LARS_TYPE
     else:
         return BASE_TYPE
 
-def getSprite(currentBabyType):
+def getSprite(currentBabyType, time):
+    print("BABY: " + str(currentBabyType))
     if currentBabyType == LARS_TYPE:
         return LARS
     elif currentBabyType == WERE_TYPE:
-        return WEREBABY_PART
+        if time > 9:
+            return BASEBABY
+        elif time > 6:
+		   	return BABY_FANGS
+        elif time > 3:
+			   return WEREBABY_PART
+        elif time == 0:
+			   return WEREBABY_FULL
     elif currentBabyType == VAMP_TYPE:
-        return VAMPBABY_PART
+        if time > 9:
+            return BASEBABY
+        elif time > 6:
+            prob = randint(0, 1)
+            if prob == 0:
+                return BABY_EYES
+            if prob == 1:
+                return BABY_FANGS
+        elif time > 3:
+            return VAMPBABY_PART
     elif currentBabyType == TENGU_TYPE:
         return TENGUBABY_PART
     else:
         return BASEBABY
 
 def clickHandler(babyType, item, time, currMessage, gameOver):
-    #print(currentBabyType)
     if gameOver:
         return currMessage, currentBabyType
     elif item == BASIN_ITEM:
-        #print("Else if")
         if babyType == BASE_TYPE:
-            time = 6
-            return "You've saved this young one!", None
+            return "You've saved this young one!", 12 
         else:
-            time = 6
-            #time = -1
-            #gameOver = True
-            return "You've given this beast our Goddess's protection! You monster!", currentBabyType
+            return "You've given this beast our Goddess's protection! You monster!", -1 
     elif item == GARLIC_ITEM:
         if babyType == VAMP_TYPE:
-            time = 6
-            return "It's a vampire!", None
+            return "It's a vampire!", 12
         else:
-            return "That's not it...", None
+            return "The baby sniffs the garlic, wholly apathetic.", time
     elif item == STAKE_ITEM:
         if babyType == VAMP_TYPE:
-            time = 6
-            return "You killed it", None
+            return "You've killed the vampire with a stake through his heart!", 12
         else:
-            return "It wasn't a vampire and you staked it...", None
+            return "It wasn't a vampire and you staked it :(", time
     elif item == RAZOR_ITEM:
         if babyType == LARS_TYPE:
-            time = 6
-            return "You shaved its beard, the source of its power!", None
+            return "You shaved its beard, the source of its power!", 12
+        elif babyType == BASE_TYPE:
+            return "You attack the baby with the razor. What is wrong with you?", -1
         else:
-            return "You're shaving something with no hair...", None
-    return "Error", None
+            return "The baby sees your razor but shows no fear.", time
+    elif item == SILVER_ITEM:
+        if babyType == WERE_TYPE:
+            return "A silver bullet! You shoot the werewolf.", 12
+        elif babyType != BASE_TYPE:
+            return "You've shot it, but it isn't a werewolf", time
+        else:
+            return "You've killed that baby ;-;", -1
+    elif item == FISH_ITEM:
+        if babyType == TENGU_TYPE:
+            return "It's a tengu! It hates the fish so much it flees.", 12
+        else:
+            return "The baby does not appreciate the smell of fish.", time
+    return "Error", -1
 
 # Game loop
 while True:
     if currentBabyType == None:
         currentBabyType = getNextBabyType()
-        currentBabySprite = getSprite(currentBabyType)
+        currentBabySprite = getSprite(currentBabyType, time)
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
         # event.button means left-mouse
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not gameOver:
             pos = pygame.mouse.get_pos()
             if BASIN.collidepoint(pos):
-                message, currentBabyType = clickHandler(currentBabyType, BASIN_ITEM, time, message, gameOver)
+                message, time = clickHandler(currentBabyType, BASIN_ITEM, time, message, gameOver)
+                if time == 12:
+                    currentBabyType = None
             # HERE
             elif TOP_RIGHT.collidepoint(pos):
-                message, currentBabyType = clickHandler(currentBabyType, GARLIC_ITEM, time, message, gameOver)
+                message, time = clickHandler(currentBabyType, GARLIC_ITEM, time, message, gameOver)
+                if time == 12:
+                    currentBabyType = None
             elif CENTER_RIGHT.collidepoint(pos):
-                message, currentBabyType = clickHandler(currentBabyType, STAKE_ITEM, time, message, gameOver)
+                message, time = clickHandler(currentBabyType, STAKE_ITEM, time, message, gameOver)
+                if time == 12:
+                    currentBabyType = None
             elif BOTTOM_RIGHT.collidepoint(pos):
-                message, currentBabyType = clickHandler(currentBabyType, RAZOR_ITEM, time, message, gameOver)
+                message, time = clickHandler(currentBabyType, RAZOR_ITEM, time, message, gameOver)
+                if time == 12:
+                    currentBabyType = None
             elif TOP_CENTER.collidepoint(pos):
-                message, currentBabyType = clickHandler(currentBabyType, FISH_ITEM, time, message, gameOver)
+                message, time = clickHandler(currentBabyType, FISH_ITEM, time, message, gameOver)
+                if time == 12:
+                    currentBabyType = None
             elif CENTER.collidepoint(pos):
-                message, currentBabyType = clickHandler(currentBabyType, SILVER_ITEM, time, message, gameOver)
+                message, time = clickHandler(currentBabyType, SILVER_ITEM, time, message, gameOver)
+                if time == 12:
+                    currentBabyType = None
         elif event.type == USEREVENT+1:
             if time >= 0:
                 time -= 1
     pygame.display.update()
     DISPLAYSURF.blit(background, (0, 0))
     DISPLAYSURF.blit(currentBabySprite, (300, 300))
-    if time == 0 and not gameOver:
+    if time == 0:
         gameOver = True
         message = "The beasts claim this one!"
+    if time == -1:
+        gameOver = True
     if pygame.font:
         font = pygame.font.Font(None, 36)
         text = font.render(message, 1, (255, 0, 0))
         textpos = text.get_rect(centerx=DISPLAYSURF.get_width()/2)
         DISPLAYSURF.blit(text, textpos)
+        if time > -1:
+            text = font.render("Time: " + str(time), 1, (255, 0, 0))
+            textpos = text.get_rect(centerx=50)
+            DISPLAYSURF.blit(text, textpos)
     #background.blit(GARLIC, (560, 20))
     pygame.draw.rect(background, (255, 0, 0, 0), TOP_RIGHT)
     pygame.draw.rect(background, (255, 255,  0, 0), CENTER_RIGHT)
