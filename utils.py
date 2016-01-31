@@ -52,7 +52,14 @@ def scrollText(text, font, color):
 		fullText.append([line, rect, False])
 
 	y = 0
+	skip = False
 	while fullText and not event.peek(QUIT):
+		if skip:
+			mixer.music.stop()
+			break
+		for e in pygame.event.get():
+			if e.type == pygame.MOUSEBUTTONDOWN or e.type == pygame.KEYDOWN:
+				skip = True
 		event.clear()
 		y -= 1
 		for p in fullText[:]:
