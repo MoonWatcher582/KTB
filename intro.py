@@ -6,18 +6,79 @@ def intro():
 	display.set_mode((800, 500))
 
 	text = """In a distant hamlet, the village priest prepares the rites.
+
+
+
+
+
+
 	As he knows, the Fertility Goddess has promised prosperity
-	so long as each hamlet baby is quickly baptized in her name.
+
+
+
+
+
+
+	so long as each hamlet baby is baptized in her name.
+
+
+
+
+
+
+
+
+
 
 	Without the ritual protection of the Goddess wrought through baptism
+
+
+
+
+
+
 	each newborn is vulnerable to be claimed by the monsters of the forest.
+
+
+
+
+
+
 	Indeed, many are claimed before they reach the holy waters.
 
+
+
+
+
+
+
+
+
+
 	A claimed child is lost to the wood; redemption is impossible.
+
+
+
+
+
+
 	Letting the beast grow would be to put the children of the Goddess
+
+
+
+
+
+
 	in grave danger.
 
-	Therefore, even if it means the priest must sacrifice his precious soul,
+
+
+
+	Therefore, 
+
+	even if it means the priest must sacrifice his own precious soul,
+
+
 
 
 

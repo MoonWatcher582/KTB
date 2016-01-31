@@ -20,6 +20,12 @@ def load_image(name, colorkey=None):
 
 def scrollText(text, font, color):
 	try:
+		mixer.music.load("data/music/IntroDialogue.ogg")
+		mixer.music.play()
+	except:
+		pass
+
+	try:
 		text = text.decode('utf-8')
 	except:
 		pass
@@ -39,37 +45,20 @@ def scrollText(text, font, color):
 	Rright = screen_rect.centerx + width * 3
 	Rleft = screen_rect.centerx - width * 3
 
-	lst = []
-	for i, l in enumerate(text.splitlines()):
-		a, b, c = l.partition('\\')
-		u = False
-		if a:
-			if a.startswith('_') and a.endswith('_'):
-				u = True
-				a = a.strip('_')
-			rect = Rect((0, 0), font.size(a))
-			if b:
-				rect.topright = Rleft, screen_rect.bottom + height * i
-			else: 
-				rect.midtop = screen_rect.centerx, screen_rect.bottom + height * i
-			lst.append([a, rect, u])
-		u = False
-		if c:
-			if c.startswith('_') and c.endswith('_'):
-				u = True
-				c = c.strip('_')
-			rect = Rect((0, 0), font.size(c))
-			rect.topleft = Rright, screen_rect.bottom + height * i
-			lst.append([c, rect, u])
+	fullText = []
+	for i, line in enumerate(text.splitlines()):
+		rect = Rect((0, 0), font.size(line))
+		rect.midtop = screen_rect.centerx, screen_rect.bottom + height * i
+		fullText.append([line, rect, False])
 
 	y = 0
-	while lst and not event.peek(QUIT):
+	while fullText and not event.peek(QUIT):
 		event.clear()
 		y -= 1
-		for p in lst[:]:
+		for p in fullText[:]:
 			r = p[1].move(0, y)
 			if r.bottom < 0:
-				lst.pop(0)
+				fullText.pop(0)
 				continue
 			if not isinstance(p[0], Surface):
 				if p[2]:
