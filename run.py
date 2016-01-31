@@ -58,6 +58,8 @@ def getSprite(currentBabyType):
         return WEREBABY_PART
     elif currentBabyType == VAMP_TYPE:
         return VAMPBABY_PART
+    elif currentBabyType == TENGU_TYPE:
+        return TENGUBABY_PART
     else:
         return BASEBABY
 
@@ -71,9 +73,9 @@ def clickHandler(babyType, item, time, currMessage, gameOver):
             time = 6
             return "You've saved this young one!", None
         else:
-            #print("Else")
-            time = -1
-            gameOver = True
+            time = 6
+            #time = -1
+            #gameOver = True
             return "You've given this beast our Goddess's protection! You monster!", currentBabyType
     elif item == GARLIC_ITEM:
         if babyType == VAMP_TYPE:
@@ -90,7 +92,7 @@ def clickHandler(babyType, item, time, currMessage, gameOver):
     elif item == RAZOR_ITEM:
         if babyType == LARS_TYPE:
             time = 6
-            return "You shaved the unshaved!", None
+            return "You shaved its beard, the source of its power!", None
         else:
             return "You're shaving something with no hair...", None
     return "Error", None
@@ -118,6 +120,8 @@ while True:
                 message, currentBabyType = clickHandler(currentBabyType, RAZOR_ITEM, time, message, gameOver)
             elif TOP_CENTER.collidepoint(pos):
                 message, currentBabyType = clickHandler(currentBabyType, FISH_ITEM, time, message, gameOver)
+            elif CENTER.collidepoint(pos):
+                message, currentBabyType = clickHandler(currentBabyType, SILVER_ITEM, time, message, gameOver)
         elif event.type == USEREVENT+1:
             if time >= 0:
                 time -= 1
