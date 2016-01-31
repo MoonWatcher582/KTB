@@ -1,9 +1,12 @@
 import pygame, sys
+from intro import intro
 from utils import *
 from sprites import *
 from pygame.locals import *
 from random import randint
 
+intro()
+DISPLAYSURF = pygame.display.set_mode((800, 593))
 pygame.display.set_caption("Kill the Baby!")
 background = load_image("KTBbackground2.png")
 BASIN = pygame.Rect((20, 391), (250, 180))
